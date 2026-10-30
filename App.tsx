@@ -1,10 +1,25 @@
-import { StyleSheet, Text, View } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text, View, Pressable } from "react-native";
 
 export default function App() {
+  const [likes, setLikes] = useState(0);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Hello, World!</Text>
       <Text style={styles.name}>Orazaly Kasymbek</Text>
+
+      <Text style={styles.counter}>Likes: {likes}</Text>
+
+      <Pressable
+        onPress={() => setLikes(likes + 1)}
+        style={({ pressed }) => [
+          styles.button,
+          pressed && styles.buttonPressed,
+        ]}
+      >
+        <Text style={styles.buttonText}>Like</Text>
+      </Pressable>
     </View>
   );
 }
@@ -15,6 +30,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+    padding: 20,
   },
   title: {
     fontSize: 32,
@@ -24,5 +40,28 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 20,
     color: "#4b5563",
+    marginBottom: 24,
+  },
+  counter: {
+    fontSize: 24,
+    fontWeight: "600",
+    marginBottom: 16,
+  },
+  button: {
+    minHeight: 44,
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    backgroundColor: "#2563eb",
+    borderRadius: 8,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonPressed: {
+    opacity: 0.8,
+  },
+  buttonText: {
+    color: "#ffffff",
+    fontSize: 18,
+    fontWeight: "600",
   },
 });
