@@ -5,9 +5,9 @@ import { Link } from "expo-router";
 export default function NotFoundScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>This screen doesn't exist.</Text>
+      <Text style={styles.title}>Page not found</Text>
       <Link href="/" style={styles.link}>
-        Go to home screen
+        Go home
       </Link>
     </View>
   );
@@ -19,14 +19,16 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     padding: 20,
+    backgroundColor: "#fff",
   },
   title: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: "bold",
     marginBottom: 12,
   },
   link: {
     fontSize: 16,
     color: "#2563eb",
+    textDecorationLine: "underline",
   },
 });
