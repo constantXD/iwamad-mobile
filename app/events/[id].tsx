@@ -7,6 +7,7 @@ import {
 } from "react-native";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useEvents } from "../../src/hooks/useEvents";
+import { HolidayNote } from "../../src/components/HolidayNote";
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -51,6 +52,7 @@ export default function EventDetailScreen() {
       <Text style={styles.detail}>
         {event.date} · {event.place}
       </Text>
+      <HolidayNote date={event.date} />
       <Text style={styles.seats}>{event.seats} seats available</Text>
     </View>
   );
@@ -83,5 +85,5 @@ const styles = StyleSheet.create({
   retryButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
   title: { fontSize: 24, fontWeight: "bold", marginBottom: 12 },
   detail: { fontSize: 16, color: "#444", marginBottom: 8 },
-  seats: { fontSize: 14, color: "#666", marginTop: 4 },
+  seats: { fontSize: 14, color: "#666", marginTop: 8 },
 });

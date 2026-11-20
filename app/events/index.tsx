@@ -8,15 +8,16 @@ import {
   Pressable,
   StyleSheet,
 } from "react-native";
-import { useEvents } from "../../src/hooks/useEvents";
-import { EventRow } from "../../src/components/EventRow";
 import { router } from "expo-router";
+import { useEvents } from "../../src/hooks/useEvents";
+import { useSavedIds } from "../../src/hooks/useSavedIds";
+import { EventRow } from "../../src/components/EventRow";
 
 export default function EventsScreen() {
   const { data, isPending, isError, error, refetch, isRefetching } =
     useEvents();
+  const { savedIds, toggleSaved } = useSavedIds();
   const [search, setSearch] = useState("");
-  const [savedIds, setSavedIds] = useState<number[]>([]);
 
   if (isPending) {
     return (
@@ -44,12 +45,6 @@ export default function EventsScreen() {
     e.title.toLowerCase().includes(search.toLowerCase()),
   );
 
-  const toggleSave = (id: number) => {
-    setSavedIds((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id],
-    );
-  };
-
   return (
     <View style={styles.container}>
       <TextInput
@@ -58,9 +53,9 @@ export default function EventsScreen() {
         value={search}
         onChangeText={setSearch}
       />
-      {savedIds.length > 0 && (
-        <Text style={styles.savedCounter}>Saved: {savedIds.length}</Text>
-      )}
+      <Text style={styles.hintText}>
+        Long-press an event to save it. Saved: {savedIds.length}
+      </Text>
       <FlatList
         data={filteredEvents}
         keyExtractor={(item) => String(item.id)}
@@ -71,7 +66,7 @@ export default function EventsScreen() {
             event={item}
             isSaved={savedIds.includes(item.id)}
             onPress={() => router.push(`/events/${item.id}`)}
-            onLongPress={() => toggleSave(item.id)}
+            onLongPress={() => toggleSaved(item.id)}
           />
         )}
         ListEmptyComponent={
@@ -113,14 +108,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 12,
-    marginBottom: 12,
-  },
-  savedCounter: {
-    fontSize: 14,
-    fontWeight: "600",
     marginBottom: 8,
-    color: "#555",
   },
+  hintText: { fontSize: 14, color: "#555", marginBottom: 12 },
   emptyText: {
     textAlign: "center",
     marginTop: 24,
