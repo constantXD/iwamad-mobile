@@ -1,0 +1,120 @@
+import { useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  FlatList,
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+} from "react-native";
+import { router } from "expo-router";
+import { useEvents } from "../../src/hooks/useEvents";
+import { useSavedIds } from "../../src/hooks/useSavedIds";
+import { EventRow } from "../../src/components/EventRow";
+
+export default function EventsScreen() {
+  const { data, isPending, isError, error, refetch, isRefetching } =
+    useEvents();
+  const { savedIds, toggleSaved } = useSavedIds();
+  const [search, setSearch] = useState("");
+
+  if (isPending) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" />
+        <Text style={styles.stateText}>Loading events</Text>
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.stateText}>Could not load events</Text>
+        <Text style={styles.errorSubText}>{error?.message}</Text>
+        <Pressable style={styles.retryButton} onPress={() => refetch()}>
+          <Text style={styles.retryButtonText}>Try again</Text>
+        </Pressable>
+      </View>
+    );
+  }
+
+  const events = data ?? [];
+  const filteredEvents = events.filter((e) =>
+    e.title.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search events"
+        value={search}
+        onChangeText={setSearch}
+      />
+      <Text style={styles.hintText}>
+        Swipe or long-press an event to save it. Saved: {savedIds.length}
+      </Text>
+      <FlatList
+        data={filteredEvents}
+        keyExtractor={(item) => String(item.id)}
+        refreshing={isRefetching}
+        onRefresh={() => refetch()}
+        renderItem={({ item }) => (
+          <EventRow
+            event={item}
+            isSaved={savedIds.includes(item.id)}
+            onPress={() => router.push(`/events/${item.id}`)}
+            onToggleSaved={() => toggleSaved(item.id)}
+          />
+        )}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>No events match</Text>
+        }
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: "#fff", padding: 16 },
+  centerContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 16,
+  },
+  stateText: { fontSize: 18, fontWeight: "bold", marginVertical: 8 },
+  errorSubText: {
+    fontSize: 14,
+    color: "#666",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  retryButton: {
+    minHeight: 44,
+    minWidth: 120,
+    backgroundColor: "#007AFF",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 16,
+    borderRadius: 8,
+  },
+  retryButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  searchInput: {
+    height: 44,
+    borderColor: "#ccc",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    marginBottom: 8,
+  },
+  hintText: { fontSize: 14, color: "#555", marginBottom: 12 },
+  emptyText: {
+    textAlign: "center",
+    marginTop: 24,
+    fontSize: 16,
+    color: "#888",
+  },
+});
