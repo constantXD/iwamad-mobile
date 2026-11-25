@@ -4,7 +4,9 @@ import {
   StyleSheet,
   ActivityIndicator,
   Pressable,
+  ScrollView,
 } from "react-native";
+import { ChatPanel } from "../../src/components/ChatPanel";
 import { useLocalSearchParams, Stack } from "expo-router";
 import { useEvents } from "../../src/hooks/useEvents";
 import { HolidayNote } from "../../src/components/HolidayNote";
@@ -46,7 +48,10 @@ export default function EventDetailScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView
+      contentContainerStyle={styles.container}
+      keyboardShouldPersistTaps="handled"
+    >
       <Stack.Screen options={{ title: event.title }} />
       <Text style={styles.title}>{event.title}</Text>
       <Text style={styles.detail}>
@@ -54,7 +59,8 @@ export default function EventDetailScreen() {
       </Text>
       <HolidayNote date={event.date} />
       <Text style={styles.seats}>{event.seats} seats available</Text>
-    </View>
+      <ChatPanel eventId={event.id} eventTitle={event.title} />
+    </ScrollView>
   );
 }
 
