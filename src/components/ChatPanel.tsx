@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { useChat } from "../hooks/useChat";
 import { sendMessage } from "../lib/chat";
+import { askNotificationPermission } from "../lib/notifications";
 
 type ChatPanelProps = {
   eventId: number;
@@ -11,6 +12,10 @@ type ChatPanelProps = {
 export function ChatPanel({ eventId, eventTitle }: ChatPanelProps) {
   const { messages, status } = useChat(eventId, eventTitle);
   const [text, setText] = useState("");
+
+  useEffect(() => {
+    askNotificationPermission();
+  }, []);
 
   const trimmed = text.trim();
   const isDisabled = trimmed.length === 0;
